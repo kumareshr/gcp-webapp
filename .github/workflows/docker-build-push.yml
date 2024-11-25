@@ -22,7 +22,9 @@ jobs:
         project_id: stone-botany-440911-u3
 
     - name: Authenticate Docker with GCR
-      run: gcloud auth configure-docker asia-northeast1-docker.pkg.dev
+      run: |
+        echo ${{ secrets.GCP_IAC_SA_KEY }} | gcloud auth activate-service-account --key-file=-
+        gcloud auth configure-docker asia-northeast1-docker.pkg.dev
 
     - name: Build Backend Docker Image
       working-directory: app/backend
