@@ -23,8 +23,9 @@ jobs:
 
     - name: Authenticate Docker with GCR
       run: |
-        echo ${{ secrets.GCP_IAC_SA_KEY }} | gcloud auth activate-service-account --key-file=-
-        gcloud auth configure-docker asia-northeast1-docker.pkg.dev
+       echo "${{ secrets.GCP_IAC_SA_KEY }}" > /tmp/gcp-key.json
+       gcloud auth activate-service-account --key-file=/tmp/gcp-key.json
+       gcloud auth configure-docker asia-northeast1-docker.pkg.dev
 
     - name: Build Backend Docker Image
       working-directory: app/backend
