@@ -1,0 +1,47 @@
+name: Build and Push Docker Images to GCR
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  build-and-push:
+    name: Build and Push to GCR
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        version: 'latest'
+        service_account_key: ${{ secrets.GCP_IAC_SA_KEY }}
+        project_id: stone-botany-440911-u3
+
+    - name: Authenticate Docker with GCR
+      run: gcloud auth configure-docker asia-northeast1-docker.pkg.dev
+
+    - name: Build Backend Docker Image
+      working-directory: ./backend
+      run: |
+        docker build -t asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:${{ github.sha }} .
+        docker tag asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:${{ github.sha }} asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:latest
+
+    - name: Push Backend Docker Image
+      run: |
+        docker push asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:${{ github.sha }}
+        docker push asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:latest
+
+    - name: Build Frontend Docker Image
+      working-directory: ./frontend
+      run: |
+        docker build -t asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/frontend:${{ github.sha }} .
+        docker tag asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/frontend:${{ github.sha }} asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/frontend:latest
+
+    - name: Push Frontend Docker Image
+      run: |
+        docker push asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/frontend:${{ github.sha }}
+        docker push asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/frontend:latest
