@@ -5,6 +5,11 @@ on:
     branches-ignore:
       - main
 
+env:
+  PROJECT_ID: stone-botany-440911-u3
+  REGION: asia-northeast1
+  GAR_LOCATION: asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/
+
 jobs:
   build-and-push:
     name: Build and Push to GCR
@@ -14,6 +19,11 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
+    - id: "auth"
+      uses: "google-github-actions/auth@v1"
+      with:
+          credentials_json: "${{ secrets.GCP_IAC_SA_KEY }}"
+
     - name: Set up Google Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
       with:
@@ -21,11 +31,20 @@ jobs:
         service_account_key: ${{ secrets.GCP_IAC_SA_KEY }}
         project_id: stone-botany-440911-u3
 
-    - name: Authenticate Docker with GCR
-      run: |
-       echo "${{ secrets.GCP_IAC_SA_KEY }}" > /tmp/gcp-key.json
-       gcloud auth activate-service-account --key-file=/tmp/gcp-key.json
-       gcloud auth configure-docker asia-northeast1-docker.pkg.dev
+    - name: "Use gcloud CLI"
+      run: "gcloud info"
+
+    - name: "Docker auth"
+      run: |-
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+      
+    - name: Build and publish image to GCR
+      uses: carbonchain/action-container-registry@v1.1
+      with:
+         project_id: stone-botany-440911-u3
+         dockerfile: .
+         image: asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:${{ github.sha }}
+         service_account_key: ${{ secrets.GCLOUD_AUTH }}
 
     - name: Build Backend Docker Image
       working-directory: app/backend
