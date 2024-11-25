@@ -1,0 +1,61 @@
+name: Build and Push Docker Images to GCR
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+env:
+  PROJECT_ID: stone-botany-440911-u3
+  REGION: asia-northeast1
+  GAR_LOCATION: asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/
+
+jobs:
+  build-and-push:
+    name: Build and Push to GCR
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - id: "auth"
+      uses: "google-github-actions/auth@v1"
+      with:
+          credentials_json: "${{ secrets.GCP_IAC_SA_KEY }}"
+
+    - name: Set up Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        version: 'latest'
+        service_account_key: ${{ secrets.GCP_IAC_SA_KEY }}
+        project_id: ${{ env.PROJECT_ID }}
+
+    - name: "Use gcloud CLI"
+      run: "gcloud info"
+
+    - name: "Docker auth"
+      run: |-
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+      
+    - name: Build Backend Docker Image
+      working-directory: app/backend
+      run: |
+        docker build -t ${{ env.GAR_LOCATION }}backend:${{ github.sha }} .
+        docker tag ${{ env.GAR_LOCATION }}backend:${{ github.sha }} ${{ env.GAR_LOCATION }}backend:latest
+
+    - name: Push Backend Docker Image
+      run: |
+        docker push ${{ env.GAR_LOCATION }}backend:${{ github.sha }}
+        docker push ${{ env.GAR_LOCATION }}backend:latest
+
+    - name: Build Frontend Docker Image
+      working-directory: app/frontend
+      run: |
+        docker build -t ${{ env.GAR_LOCATION }}frontend:${{ github.sha }} .
+        docker tag ${{ env.GAR_LOCATION }}frontend:${{ github.sha }} ${{ env.GAR_LOCATION }}frontend:latest
+
+    - name: Push Frontend Docker Image
+      run: |
+        docker push ${{ env.GAR_LOCATION }}frontend:${{ github.sha }}
+        docker push ${{ env.GAR_LOCATION }}frontend:latest
