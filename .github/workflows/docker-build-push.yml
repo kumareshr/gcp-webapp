@@ -25,7 +25,7 @@ jobs:
       run: gcloud auth configure-docker asia-northeast1-docker.pkg.dev
 
     - name: Build Backend Docker Image
-      working-directory: ./backend
+      working-directory: app/backend
       run: |
         docker build -t asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:${{ github.sha }} .
         docker tag asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:${{ github.sha }} asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:latest
@@ -36,7 +36,7 @@ jobs:
         docker push asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:latest
 
     - name: Build Frontend Docker Image
-      working-directory: ./frontend
+      working-directory: app/frontend
       run: |
         docker build -t asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/frontend:${{ github.sha }} .
         docker tag asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/frontend:${{ github.sha }} asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/frontend:latest
