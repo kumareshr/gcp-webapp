@@ -28,12 +28,12 @@ jobs:
       working-directory: app/backend
       run: |
         docker build -t asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:${{ github.sha }} .
-        docker tag asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:${{ github.sha }} asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:latest
+#        docker tag asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:${{ github.sha }} asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:latest
 
     - name: Push Backend Docker Image
       run: |
         docker push asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:${{ github.sha }}
-        docker push asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:latest
+#        docker push asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:latest
 
     - name: Build Frontend Docker Image
       working-directory: app/frontend
