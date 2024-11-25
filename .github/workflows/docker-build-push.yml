@@ -29,7 +29,7 @@ jobs:
       with:
         version: 'latest'
         service_account_key: ${{ secrets.GCP_IAC_SA_KEY }}
-        project_id: stone-botany-440911-u3
+        project_id: ${{ env.PROJECT_ID }}
 
     - name: "Use gcloud CLI"
       run: "gcloud info"
@@ -38,32 +38,24 @@ jobs:
       run: |-
           gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
       
-#    - name: Build and publish image to GCR
-#      uses: carbonchain/action-container-registry@v1.1
-#      with:
-#         project_id: stone-botany-440911-u3
-#         dockerfile: .
-#         image: asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:${{ github.sha }}
-#         service_account_key: ${{ secrets.GCP_IAC_SA_KEY }}
-
     - name: Build Backend Docker Image
       working-directory: app/backend
       run: |
-        docker build -t asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:${{ github.sha }} .
-#        docker tag asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:${{ github.sha }} asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:latest
+        docker build -t ${{ env.GAR_LOCATION }}backend:${{ github.sha }} .
+        docker tag ${{ env.GAR_LOCATION }}backend:${{ github.sha }} ${{ env.GAR_LOCATION }}backend:latest
 
     - name: Push Backend Docker Image
       run: |
-        docker push asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:${{ github.sha }}
-#        docker push asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/backend:latest
+        docker push ${{ env.GAR_LOCATION }}backend:${{ github.sha }}
+        docker push ${{ env.GAR_LOCATION }}backend:latest
 
     - name: Build Frontend Docker Image
       working-directory: app/frontend
       run: |
-        docker build -t asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/frontend:${{ github.sha }} .
-        docker tag asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/frontend:${{ github.sha }} asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/frontend:latest
+        docker build -t ${{ env.GAR_LOCATION }}frontend:${{ github.sha }} .
+        docker tag ${{ env.GAR_LOCATION }}frontend:${{ github.sha }} ${{ env.GAR_LOCATION }}frontend:latest
 
     - name: Push Frontend Docker Image
       run: |
-        docker push asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/frontend:${{ github.sha }}
-        docker push asia-northeast1-docker.pkg.dev/stone-botany-440911-u3/devops-webapp/frontend:latest
+        docker push ${{ env.GAR_LOCATION }}frontend:${{ github.sha }}
+        docker push ${{ env.GAR_LOCATION }}frontend:latest
