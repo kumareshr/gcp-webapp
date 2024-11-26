@@ -41,3 +41,37 @@ module "gke" {
     ]
   }
 }
+
+# Define a Google Service Account for Artifact Registry access
+#resource "google_service_account" "artifact_registry_sa" {
+#  account_id   = "artifact-registry-reader"
+#  display_name = "Artifact Registry Reader"
+#}
+#
+## Grant Artifact Registry permissions to the GSA
+#resource "google_project_iam_member" "artifact_registry_role" {
+#  project = var.project_id
+#  role    = "roles/artifactregistry.reader"
+#  member  = "serviceAccount:${google_service_account.artifact_registry_sa.email}"
+#}
+#
+## Create a Kubernetes Service Account (KSA) in the GKE cluster
+##resource "kubernetes_service_account" "ksa_artifact_registry" {
+##  metadata {
+##    name      = "artifact-registry-ksa"
+##    namespace = "todo-webapp" 
+##    annotations = {
+##      "iam.gke.io/gcp-service-account" = google_service_account.artifact_registry_sa.email
+##    }
+##  }
+##}
+#
+## Allow the GKE cluster to impersonate the GSA
+#resource "google_service_account_iam_binding" "gke_workload_identity_binding" {
+#  service_account_id = google_service_account.artifact_registry_sa.id
+#  role               = "roles/iam.workloadIdentityUser"
+#
+#  members = [
+#    "serviceAccount:${var.project_id}.svc.id.goog[todo-webapp/artifact-registry-ksa]",
+#  ]
+#}

@@ -4,6 +4,9 @@ on:
   push:
     branches-ignore:
       - main
+    paths:
+      - app/frontend/**
+      - app/frontend/** 
 
 env:
   PROJECT_ID: stone-botany-440911-u3
