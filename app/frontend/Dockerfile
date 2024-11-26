@@ -23,7 +23,7 @@ FROM nginx:stable-alpine
 COPY --from=build /app/build /usr/share/nginx/html
 
 # Expose port 80
-EXPOSE 8080
+EXPOSE 80
 
 # Default command to start Nginx
 CMD ["nginx", "-g", "daemon off;"]
