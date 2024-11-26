@@ -1,20 +1,23 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import os
 import psycopg2
 
 app = Flask(__name__)
 
-# Database configuration from environment variables
+# Enable CORS for all routes
+CORS(app)
+
+# Database configuration from environment variables (passed via Kubernetes secrets)
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_PORT = os.getenv("DB_PORT", "5432")
 DB_NAME = os.getenv("DB_NAME", "todo_db")
 DB_USER = os.getenv("DB_USER", "postgres")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "password")
 
-# Connect to the database
-
 
 def get_db_connection():
+    """Establish and return a database connection."""
     return psycopg2.connect(
         host=DB_HOST,
         port=DB_PORT,
@@ -26,6 +29,7 @@ def get_db_connection():
 
 @app.route("/api/tasks", methods=["GET"])
 def get_tasks():
+    """Retrieve all tasks from the database."""
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("SELECT id, task FROM tasks;")
@@ -37,6 +41,7 @@ def get_tasks():
 
 @app.route("/api/tasks", methods=["POST"])
 def add_task():
+    """Add a new task to the database."""
     data = request.json
     if not data or "task" not in data:
         return jsonify({"error": "Task content is required"}), 400
