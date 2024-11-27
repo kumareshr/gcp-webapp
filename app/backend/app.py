@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Database configuration from environment variables (passed via Kubernetes secrets)
-DB_HOST = os.getenv("DB_HOST", "localhost")
+DB_HOST = os.getenv("DB_HOST", "127.0.0.1")
 DB_PORT = os.getenv("DB_PORT", "3306")
 DB_NAME = os.getenv("DB_NAME", "todo_db")
 DB_USER = os.getenv("DB_USER", "root")
