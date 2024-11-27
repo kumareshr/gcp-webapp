@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
-import psycopg2
+import mysql.connector
 
 app = Flask(__name__)
 
@@ -10,15 +10,15 @@ CORS(app)
 
 # Database configuration from environment variables (passed via Kubernetes secrets)
 DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_PORT = os.getenv("DB_PORT", "5432")
+DB_PORT = os.getenv("DB_PORT", "3306")
 DB_NAME = os.getenv("DB_NAME", "todo_db")
-DB_USER = os.getenv("DB_USER", "postgres")
+DB_USER = os.getenv("DB_USER", "root")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "password")
 
 
 def get_db_connection():
     """Establish and return a database connection."""
-    return psycopg2.connect(
+    return mysql.connector.connect(
         host=DB_HOST,
         port=DB_PORT,
         database=DB_NAME,
@@ -48,9 +48,9 @@ def add_task():
 
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("INSERT INTO tasks (task) VALUES (%s) RETURNING id;", (data["task"],))
-    task_id = cur.fetchone()[0]
+    cur.execute("INSERT INTO tasks (task) VALUES (%s);", (data["task"],))
     conn.commit()
+    task_id = cur.lastrowid
     cur.close()
     conn.close()
     return jsonify({"id": task_id, "task": data["task"]}), 201

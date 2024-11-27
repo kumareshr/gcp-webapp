@@ -14,3 +14,10 @@ variable "network_name" {
   default = "vpc-tokyo-01"
   
 }
+
+variable "db_password" {
+  description = "Database password for the Cloud SQL user."
+  type        = string
+  sensitive   = true
+  default = "securepassword"
+}
