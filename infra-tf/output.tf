@@ -13,3 +13,5 @@ output "workloadidentity_namespace" {
   value = module.gke.identity_namespace
   
 }
+
+

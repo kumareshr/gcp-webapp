@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - app/frontend/**
-      - app/frontend/** 
+      - app/backend/** 
 
 env:
   PROJECT_ID: stone-botany-440911-u3
