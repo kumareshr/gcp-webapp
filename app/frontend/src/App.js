@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 // Use the environment variable for the backend URL
-const BACKEND_URL = process.env.TODO_APP_BACKEND_URL || "";
+const BACKEND_URL = process.env.TODO_APP_BACKEND_URL || "http://todo-app-backend.todo-webapp.svc.cluster.local";
 console.log("Backend URL being used:", process.env.TODO_APP_BACKEND_URL);
 
 function App() {
