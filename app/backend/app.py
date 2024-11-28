@@ -5,8 +5,8 @@ import mysql.connector
 
 app = Flask(__name__)
 
-# Enable CORS for all routes
-CORS(app)
+# Enable CORS for all routes with specific origins
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Database configuration from environment variables (passed via Kubernetes secrets)
 DB_HOST = os.getenv("DB_HOST")
