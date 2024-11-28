@@ -14,7 +14,7 @@ COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
+# Copy application code dummy
 COPY . .
 
 # Expose port and set default entrypoint
