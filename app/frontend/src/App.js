@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 
 // Use the environment variable for the backend URL
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "";
+const BACKEND_URL = process.env.TODO_APP_BACKEND_URL || "";
+console.log("Backend URL being used:", process.env.TODO_APP_BACKEND_URL);
 
 function App() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
 
   useEffect(() => {
+    console.log("Fetching tasks from:", `${BACKEND_URL}/api/tasks`);
     fetch(`${BACKEND_URL}/api/tasks`)
       .then((response) => {
         if (!response.ok) {
@@ -23,6 +25,7 @@ function App() {
     if (!newTask) return;
 
     try {
+      console.log("Task adding using backend URL:", `${BACKEND_URL}/api/tasks`);
       const response = await fetch(`${BACKEND_URL}/api/tasks`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
